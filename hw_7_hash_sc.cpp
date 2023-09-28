@@ -146,6 +146,53 @@ HashTable::HashTable() {
 	size = 0;
 }
 
+// This is the hash function "h". 
+int HashTable::hash(int key){
+	return key % size; 
+}
+
+//CreateTable
+void HashTable::CreateTable(int divisor){
+	size = divisor;
+
+	//Dynamically Allocate array of Node pointers. Assign to Table which is a pointer of pointer
+	table = new Node*[size];
+
+	//Initialize every space in table to NULL
+	for(int i = 0; i < size; i++){
+		table[i] = NULL;
+	}
+}
+
+//Search
+Node* HashTable::Search(int key){
+	int hashedKey = hash(key);
+	Node* toReturn = NULL;
+	
+	//Student is found at hashedKey
+	if(table[hashedKey]->Get_key() == key) toReturn = table[hashedKey];
+
+	//If not found, search along chain
+	else{
+		Node* curr = table[hashedKey];
+
+		while(curr != NULL){
+			if(curr->Get_key() == key){
+				toReturn = curr;
+			}
+			curr = curr->Get_p();
+		}
+	}
+
+	return toReturn;
+}
+
+// This function adds a student (address 
+// stored at "temp") to the hash table. 
+void HashTable::Add(Node* temp){
+
+}
+
 // This is the print function. 
 // It is defined for you. 
 // Do not modify it.
