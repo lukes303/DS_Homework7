@@ -146,7 +146,7 @@ HashTable::HashTable() {
 	size = 0;
 }
 
-// This is the hash function "h". 
+//hash 
 int HashTable::hash(int key){
 	return key % size; 
 }
@@ -166,7 +166,9 @@ void HashTable::CreateTable(int divisor){
 
 //Search
 Node* HashTable::Search(int key){
+	//Get hashed key
 	int hashedKey = hash(key);
+	//If node is not found, toReturn will remain NULL
 	Node* toReturn = NULL;
 	
 	//Student is found at hashedKey
@@ -174,12 +176,16 @@ Node* HashTable::Search(int key){
 
 	//If not found, search along chain
 	else{
-		Node* curr = table[hashedKey];
+		//table[hashedKey] was already checked so set curr to the next node
+		Node* curr = table[hashedKey]->Get_p();
 
 		while(curr != NULL){
+			//If the key of current node matches the key we are searching for
 			if(curr->Get_key() == key){
+				//Update toReturn
 				toReturn = curr;
 			}
+			//update curr
 			curr = curr->Get_p();
 		}
 	}
@@ -187,10 +193,62 @@ Node* HashTable::Search(int key){
 	return toReturn;
 }
 
-// This function adds a student (address 
-// stored at "temp") to the hash table. 
+//Add
 void HashTable::Add(Node* temp){
+	
+	//Get key from temp
+	int key = temp->Get_key();
+	//Get hashedKey
+	int hashedKey = hash(key);
 
+	//Insert temp at table[hashedKey] if spot is empty
+	if(table[hashedKey] == NULL) table[hashedKey] = temp;
+
+	//If spot is not empty, search along chain
+	else{
+		//table[hashedKey] was already checked so set curr to the next node
+		Node* curr = table[hashedKey]->Get_p();
+		//set previous node
+		Node* prev = table[hashedKey];
+
+		while(curr != NULL){
+			prev = curr;
+			curr = curr->Get_p();
+		}
+
+		prev->Set_p(temp);
+	}
+}
+
+//Remove
+void HashTable::Remove(int key){
+	
+	//Get hashedKey
+	int hashedKey = hash(key);
+
+	//Remove Node pointer at table[hashedKey] if keys match
+	if(table[hashedKey]->Get_key() == key) table[hashedKey] = NULL;
+
+	//If they don't match, search along chain
+	else{
+		Node* curr = table[hashedKey]->Get_p();
+		Node* prev = table[hashedKey];
+
+		while(curr != NULL){
+			
+			if(curr->Get_key() == key){
+				prev->Set_p(curr->Get_p());
+				break; 
+			}
+			prev = curr;
+			curr = curr->Get_p();
+		}
+	}
+}
+
+//Get Size
+int HashTable::Get_Size(){
+	return size;
 }
 
 // This is the print function. 
